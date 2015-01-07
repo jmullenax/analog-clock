@@ -5,10 +5,10 @@ $(document).ready(function(){
     var ctx = clock.getContext("2d");
 
 
-    function Hand(center, clockSize) {
+    function Hand(center, clockSize, outset) {
       this.step = null;
       this.scale = 60;
-      this.outset = -15;
+      this.outset = (outset === undefined) ? -15 : outset;
       this.end = null;
       this.thickness = 5;
       this.color = '#111';
@@ -106,7 +106,7 @@ $(document).ready(function(){
               var minutes = time.getMinutes()+(seconds/60);
               var hours = (time.getHours()%12)+(minutes/60);
               var secondsHand = new Hand(that.center, that.size);
-              var minutesHand = new Hand(that.center, that.size);
+              var minutesHand = new Hand(that.center, that.size, -25);
               var hoursHand = new Hand(that.center, that.size);
               //console.log('begin drawing');
               
@@ -120,7 +120,7 @@ $(document).ready(function(){
                 console.log('H:M:S '+hours+':'+minutes+':'+seconds);
               }
                 
-          }, 1000);
+          }, 100);
     };
 
     Clock.prototype.drawTicks = function() {
@@ -149,7 +149,7 @@ $(document).ready(function(){
 
     Clock.prototype.drawCircle = function(x, y, diameter, color) {
        if(color === undefined) {
-          color = '#000';
+          color = 'steelblue';
         }
 
         ctx.lineWidth = 2;
@@ -165,18 +165,18 @@ $(document).ready(function(){
 
     var clock1 = new Clock();
 //
-    clock1.setLog(true);
+    //clock1.setLog(true);
     clock1.init();
     clock1.run();
 
-    var clock2 = new Clock(300, 150);
-    clock2.setLog(true);
-    clock2.init();
-    clock2.run();
-//
-    var clock3 = new Clock(150, 300);
-    clock3.setLog(true);
-    clock3.init();
-    clock3.run();
+    //var clock2 = new Clock(300, 150);
+    ////clock2.setLog(true);
+    //clock2.init();
+    //clock2.run();
+////
+    //var clock3 = new Clock(150, 300);
+    ////clock3.setLog(true);
+    //clock3.init();
+    //clock3.run();
   }
 });
