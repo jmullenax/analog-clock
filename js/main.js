@@ -5,7 +5,7 @@ $(document).ready(function(){
     var ctx = clock.getContext("2d");
 
 
-    function Hand() {
+    function Hand(clockSize) {
       this.step = null;
       this.scale = 60;
       this.outset = -15;
@@ -13,8 +13,8 @@ $(document).ready(function(){
       this.thickness = 5;
       this.color = '#111';
       this.center = {};
-      this.center.x = 150;
-      this.center.y = 150;
+      this.center.x = clockSize/2;
+      this.center.y = clockSize/2;
       this.offset = Math.PI * 75;
       this.halfScale = this.scale/2;
       this.stepPI = this.step * Math.PI;
@@ -64,15 +64,17 @@ $(document).ready(function(){
 
 
     function Clock(centerX, centerY) {
+      this.size = 300;// px square
+
       if(centerX === undefined) {
-        centerX = 150;
+        centerX = this.size/2;
       }
       if(centerY === undefined) {
-        centerY = 150;
+        centerY = this.size/2;
       }
       this.log = false;
       this.center = {x:centerX, y:centerY};
-      this.size = 300;// px square
+      
       //this.center.x = centerX;
       //this.center.y = centerY;
     }
@@ -88,7 +90,7 @@ $(document).ready(function(){
       this.drawCenterCircle(3);
       this.drawTicks();
       this.drawCenterCircle(100);
-      this.drawCenterCircle(25, 'red');
+      this.drawCenterCircle(10, 'red');
     };
 
     Clock.prototype.run = function() {
@@ -98,11 +100,11 @@ $(document).ready(function(){
               that.draw();
               var time = new Date();
               var seconds = (time.getMilliseconds()/1000)+time.getSeconds();
-              var minutes = time.getMinutes();
-              var hours = time.getHours()%12;
-              var secondsHand = new Hand();
-              var minutesHand = new Hand();
-              var hoursHand = new Hand();
+              var minutes = time.getMinutes()+(seconds/60);
+              var hours = (time.getHours()%12)+(minutes/60);
+              var secondsHand = new Hand(that.size);
+              var minutesHand = new Hand(that.size);
+              var hoursHand = new Hand(that.size);
               //console.log('begin drawing');
               
               minutesHand.draw({step: minutes, end: 115});
@@ -125,8 +127,8 @@ $(document).ready(function(){
       var width = 10;
       var color = '#555';
       var num_ticks = 12;
-      var hourTicks = new Hand();
-      var secondTicks = new Hand();
+      var hourTicks = new Hand(this.size);
+      var secondTicks = new Hand(this.size);
 
       for(var q = 0; q < num_ticks; q++) {
         secondTicks.draw({step: q, scale: num_ticks, outset: tickOutset, end: tickEnd, width: width, color: color});
@@ -168,7 +170,7 @@ $(document).ready(function(){
     //clock2.setLog(true);
     //clock2.init();
     //clock2.run();
-
+//
     //var clock3 = new Clock(150, 450);
     //clock3.setLog(true);
     //clock3.init();
