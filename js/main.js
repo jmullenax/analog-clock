@@ -8,9 +8,9 @@ $(document).ready(function(){
     function Hand(center, clockSize, outset) {
       this.step = null;
       this.scale = 60;
-      this.outset = (outset === undefined) ? -15 : outset;
+      this.outset = clockSize/-20;
       this.end = null;
-      this.thickness = 5;
+      this.thickness = clockSize/100;
       this.color = '#111';
       this.center = {};
       this.center.x = center.x;
@@ -48,17 +48,11 @@ $(document).ready(function(){
 
         ctx.strokeStyle = this.color;
         ctx.lineWidth = this.thickness;
-        ctx.beginPath();
-
-        
-          
+        ctx.beginPath();          
         var new_x = this.getX(this.center.x, this.outset);
         var new_x_2 =  this.getX(this.center.x, this.end);
         var new_y = this.getY(this.center.y, this.outset);
         var new_y_2 =  this.getY(this.center.y, this.end);
-
-        console.log(new_x);
-        console.log(new_y);
 
         ctx.moveTo( new_x, new_y );
         ctx.lineTo( new_x_2, new_y_2 );
@@ -67,7 +61,7 @@ $(document).ready(function(){
 
 
     function Clock(centerX, centerY) {
-      this.size = 300;// px square
+      this.size = 600;// px square
 
       if(centerX === undefined) {
         centerX = this.size/2;
@@ -77,9 +71,6 @@ $(document).ready(function(){
       }
       this.log = false;
       this.center = {x:centerX, y:centerY};
-      
-      //this.center.x = centerX;
-      //this.center.y = centerY;
     }
 
     
@@ -89,11 +80,12 @@ $(document).ready(function(){
     };
       
     Clock.prototype.draw = function() {
-      this.drawCenterCircle(125);        
-      this.drawCenterCircle(3);
+      this.drawCenterCircle(this.size/2 - this.size/50);        
+      
       this.drawTicks();
-      this.drawCenterCircle(100);
-      this.drawCenterCircle(10, 'red');
+      this.drawCenterCircle(this.size/3);
+      this.drawCenterCircle(this.size/30, 'red');
+      this.drawCenterCircle(this.size/50);
     };
 
     Clock.prototype.run = function() {
@@ -108,14 +100,11 @@ $(document).ready(function(){
               var secondsHand = new Hand(that.center, that.size);
               var minutesHand = new Hand(that.center, that.size, -25);
               var hoursHand = new Hand(that.center, that.size);
-              //console.log('begin drawing');
               
-              minutesHand.draw({step: minutes, end: 115});
-              hoursHand.draw({scale: 12,step: hours, end: 65});
-              secondsHand.draw({step: seconds, outset: 20, end: 95, thickness: 2, color: 'red'});
-              //console.log('end drawing');
-
-
+              minutesHand.draw({step: minutes, end: that.size*.45, thickness: that.size/50});
+              hoursHand.draw({scale: 12,step: hours, end: that.size*.2, thickness: that.size/50});
+              secondsHand.draw({step: seconds, outset: that.size/-20, end: that.size/3 + that.size/30, thickness: that.size/150, color: 'red'});
+              
               if(that.log) {
                 console.log('H:M:S '+hours+':'+minutes+':'+seconds);
               }
@@ -124,22 +113,22 @@ $(document).ready(function(){
     };
 
     Clock.prototype.drawTicks = function() {
-      var tickLength = 40;
-      var tickOutset = 75;
+      var tickLength = (this.size / 10) - (this.size/100);
+      var tickOutset = this.size / 3;
       var tickEnd = tickLength + tickOutset;
-      var width = 10;
+      var width = this.size/30;
       var color = '#555';
       var num_ticks = 12;
       var hourTicks = new Hand(this.center, this.size);
-      var secondTicks = new Hand(this.center, this.size);
+      var minuteTicks = new Hand(this.center, this.size);
 
       for(var q = 0; q < num_ticks; q++) {
-        secondTicks.draw({step: q, scale: num_ticks, outset: tickOutset, end: tickEnd, width: width, color: color});
+        minuteTicks.draw({step: q, scale: num_ticks, outset: tickOutset, end: tickEnd, width: width, color: color});
       }
 
       for(var q = 0; q < 60; q++) {
         if(q%5 == 0) continue;
-        hourTicks.draw({step: q, outset: tickOutset, end: tickEnd, width: 1, color: '#999'});
+        hourTicks.draw({step: q, outset: tickOutset, end: tickEnd, width: this.size/300, color: '#ccc'});
       }
     };
 
@@ -152,7 +141,7 @@ $(document).ready(function(){
           color = 'steelblue';
         }
 
-        ctx.lineWidth = 2;
+        ctx.lineWidth = this.size/150;
         ctx.beginPath();
         ctx.strokeStyle = color;
         ctx.arc(x,y,diameter,0,Math.PI*2,true);
@@ -164,19 +153,7 @@ $(document).ready(function(){
     };
 
     var clock1 = new Clock();
-//
-    //clock1.setLog(true);
     clock1.init();
     clock1.run();
-
-    //var clock2 = new Clock(300, 150);
-    ////clock2.setLog(true);
-    //clock2.init();
-    //clock2.run();
-////
-    //var clock3 = new Clock(150, 300);
-    ////clock3.setLog(true);
-    //clock3.init();
-    //clock3.run();
   }
 });
