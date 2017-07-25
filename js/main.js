@@ -2,23 +2,29 @@ $(document).ready(function(){
   
   var clockHandsLayerElement = document.getElementById('clockHandsLayer');
   var clockFaceLayerElement = document.getElementById('clockFaceLayer');
+  
+  // make sure that the 2 elements are in the DOM
   if (clockHandsLayerElement.getContext && clockFaceLayerElement.getContext) {
+    
     var clockHandsLayer = clockHandsLayerElement.getContext("2d");
     var clockFaceLayer = clockFaceLayerElement.getContext("2d");
 
     function Hand(center, clockSize, outset) {
       this.step = null;
-      this.scale = 60;
-      this.outset = clockSize/-20;
+      this.scale = 60; // the distance around the face that the hands are apart, must be set to 60
+      this.outset = clockSize/-10; // how far the hand is drawn in the opposite direction
       this.end = null;
-      this.thickness = clockSize/100;
-      this.color = '#111';
-      this.center = {};
-      this.center.x = center.x;
-      this.center.y = center.y;
+      this.thickness = clockSize/100; // thickness of the ticks
+      this.color = '#111'; // color of the hands
+      this.center = {
+        x: center.x,
+        y: center.y
+      };
+      
       this.offset = Math.PI * 75;
       this.halfScale = this.scale/2;
       this.stepPI = this.step * Math.PI;
+      this.drawInterval = 100;// in milliseconds
     }
 
     Hand.prototype.getX = function(start, stop) {
@@ -112,7 +118,7 @@ $(document).ready(function(){
               if(that.log) {
                 console.log('H:M:S '+hours+':'+minutes+':'+seconds);
               }                
-          }, 100);
+          }, this.drawInterval);
     };
 
     Clock.prototype.drawTicks = function(context) {
@@ -155,8 +161,8 @@ $(document).ready(function(){
       this.log = set;
     };
 
-    var clock1 = new Clock();
-    clock1.init();
-    clock1.run();
+    var clock = new Clock();
+    clock.init();
+    clock.run();
   }
 });
