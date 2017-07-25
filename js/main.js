@@ -83,14 +83,16 @@ $(document).ready(function(){
     Clock.prototype.init = function() {
       // body...
     };
-      
+     
+    // here is where the actual design of the clock is handled. We could swap out "skins" here  
     Clock.prototype.draw = function(context) {
-      this.drawCenterCircle(context, this.size/2 - this.size/50);        
-      
+
+      this.drawCenterCircle(context, this.size/2 - this.size/50);     
       this.drawTicks(context);
       this.drawCenterCircle(context, this.size/3);
       this.drawCenterCircle(context, this.size/30, 'red');
       this.drawCenterCircle(context, this.size/50);
+
     };
 
     Clock.prototype.run = function() {
@@ -107,6 +109,8 @@ $(document).ready(function(){
               var seconds = (time.getMilliseconds()/1000)+time.getSeconds();
               var minutes = time.getMinutes()+(seconds/60);
               var hours = (time.getHours()%12)+(minutes/60);
+
+              // draw 3 hands
               var secondsHand = new Hand(that.center, that.size);
               var minutesHand = new Hand(that.center, that.size, -25);
               var hoursHand = new Hand(that.center, that.size);
@@ -141,6 +145,7 @@ $(document).ready(function(){
       }
     };
 
+    // a wrapper for drawCircle that sets the center to the center of the element
     Clock.prototype.drawCenterCircle = function(context, size, color) {
       this.drawCircle(context, this.center.x, this.center.y, size, color);
     }
