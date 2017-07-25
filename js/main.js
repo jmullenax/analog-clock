@@ -1,7 +1,64 @@
 $(document).ready(function(){
+
+  function addProperties(el, attributes) {
+
+    for (let [key, value] of Object.entries(attributes)) {
+
+      if(key == 'style') {
+        for (let [style_key, style_value] of Object.entries(value)) {
+          el.style[style_key] = style_value;
+        }
+        
+      } else{
+        el.setAttribute(key, value);
+      }
+    }
+  }
+
+  // returns the height of the element, minus the px
+  function getHeight(el) {
+    return el.style.height.slice(0, -2);
+  }
   
-  var clockHandsLayerElement = document.getElementById('clockHandsLayer');
-  var clockFaceLayerElement = document.getElementById('clockFaceLayer');
+  var container = document.querySelector('.analog-clock-container');
+  container.style.position = 'relative';
+  container.style.height = container.style.width = (width = container.getAttribute('data-clock-size')) ? width + 'px' : '600px';
+
+  var clockHandsLayer = document.createElement('canvas');
+  var clockFaceLayer = document.createElement('canvas');  
+
+  container.appendChild(clockHandsLayer);
+  container.appendChild(clockFaceLayer);
+
+  addProperties(clockHandsLayer, {
+    id: 'clockHandsLayer',
+    height: container.getAttribute('data-clock-size'),
+      width: container.getAttribute('data-clock-size'),
+    style: {
+      
+      'background-color': 'transparent',
+      position: 'relative',
+      'z-index': '2'
+    }
+  });
+
+  addProperties(clockFaceLayer, {
+    id: 'clockFaceLayer',
+    height: container.getAttribute('data-clock-size'),
+      width: container.getAttribute('data-clock-size'),
+    style: {
+      
+      'background-color': 'transparent',
+      position: 'absolute',
+      top: '0',
+      left: '0'
+    }
+  });
+
+  var children = container.childNodes;
+
+  var clockHandsLayerElement = children[0];// container.getElementById('clockHandsLayer');
+  var clockFaceLayerElement = children[1];// container.getElementById('clockFaceLayer');
   
   // make sure that the 2 elements are in the DOM
   if (clockHandsLayerElement.getContext && clockFaceLayerElement.getContext) {
@@ -10,6 +67,7 @@ $(document).ready(function(){
     var clockFaceLayer = clockFaceLayerElement.getContext("2d");
 
     function Hand(center, clockSize, outset) {
+
       this.step = null;
       this.scale = 60; // the distance around the face that the hands are apart, must be set to 60
       this.outset = clockSize/-10; // how far the hand is drawn in the opposite direction
@@ -67,8 +125,9 @@ $(document).ready(function(){
     };
 
 
-    function Clock(centerX, centerY) {
-      this.size = 600;// px square
+    function Clock(container_el, centerX, centerY) {
+      this.size = getHeight(container_el);// remove the px at the end
+      console.log(this.size);
 
       if(centerX === undefined) {
         centerX = this.size/2;
@@ -166,7 +225,7 @@ $(document).ready(function(){
       this.log = set;
     };
 
-    var clock = new Clock();
+    var clock = new Clock(container);//document.querySelector('.analog-clock-container'));
     clock.init();
     clock.run();
   }
