@@ -135,8 +135,9 @@ $(document).ready(function(){
       if(centerY === undefined) {
         centerY = this.size/2;
       }
-      this.log = false;
+      this.log = true;
       this.center = {x:centerX, y:centerY};
+      this.drawInterval = 150
     }  
 
     Clock.prototype.init = function() {
@@ -161,27 +162,33 @@ $(document).ready(function(){
 
         that.draw(face);
 
-        window.setInterval(function(){
-              hands.clearRect(that.center.x - that.size/2, that.center.y - that.size/2, that.size, that.size);
-              
-              var time = new Date();
-              var seconds = (time.getMilliseconds()/1000)+time.getSeconds();
-              var minutes = time.getMinutes()+(seconds/60);
-              var hours = (time.getHours()%12)+(minutes/60);
+        console.log(this.drawInterval)
 
-              // draw 3 hands
-              var secondsHand = new Hand(that.center, that.size);
-              var minutesHand = new Hand(that.center, that.size, -25);
-              var hoursHand = new Hand(that.center, that.size);
-              
-              minutesHand.draw(hands, {step: minutes, end: that.size*.45, thickness: that.size/50});
-              hoursHand.draw(hands, {scale: 12,step: hours, end: that.size*.2, thickness: that.size/50});
-              secondsHand.draw(hands, {step: seconds, outset: that.size/-20, end: that.size/3 + that.size/30, thickness: that.size/150, color: 'red'});
-              
-              if(that.log) {
-                console.log('H:M:S '+hours+':'+minutes+':'+seconds);
-              }                
-          }, this.drawInterval);
+        const clockLoop = function(){
+          hands.clearRect(that.center.x - that.size/2, that.center.y - that.size/2, that.size, that.size);
+          
+          var time = new Date();
+          var seconds = (time.getMilliseconds()/1000)+time.getSeconds();
+          var minutes = time.getMinutes()+(seconds/60);
+          var hours = (time.getHours()%12)+(minutes/60);
+
+          // draw 3 hands
+          var secondsHand = new Hand(that.center, that.size);
+          var minutesHand = new Hand(that.center, that.size, -25);
+          var hoursHand = new Hand(that.center, that.size);
+          
+          minutesHand.draw(hands, {step: minutes, end: that.size*.45, thickness: that.size/50});
+          hoursHand.draw(hands, {scale: 12,step: hours, end: that.size*.2, thickness: that.size/50});
+          secondsHand.draw(hands, {step: seconds, outset: that.size/-20, end: that.size/3 + that.size/30, thickness: that.size/150, color: 'red'});
+          
+          if(that.log) {
+            console.log('H:M:S '+hours+':'+minutes+':'+seconds);
+          }                
+        }
+
+        clockLoop()
+
+        window.setInterval(clockLoop, that.drawInterval);
     };
 
     Clock.prototype.drawTicks = function(context) {
